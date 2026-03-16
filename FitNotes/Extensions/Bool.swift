@@ -2,7 +2,7 @@
 //  Bool.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 02/01/2024.
+//  Created by xiscorossello on 02/01/2024.
 //
 
 extension Bool {

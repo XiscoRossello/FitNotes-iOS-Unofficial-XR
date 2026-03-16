@@ -2,7 +2,7 @@
 //  ExerciseSearchView.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 29/04/2024.
+//  Created by xiscorossello on 29/04/2024.
 //
 
 import SwiftUI
@@ -49,12 +49,12 @@ struct CategoryChipView: View {
                 .frame(width: 8, height: 8)
             
             Text(category.name)
-                .foregroundColor(isSelected ? .white : .black)
+                .foregroundColor(isSelected ? .white : .primary)
                 .lineLimit(1)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(isSelected ? .blue : .gray)
+        .background(isSelected ? .blue : Color(uiColor: .secondarySystemBackground))
         .cornerRadius(16)
         .onTapGesture {
             if isSelected {

@@ -1,21 +1,75 @@
-### Heavily inspired by my desire to have the [FitNotes Android](https://www.fitnotesapp.com/) when I transitioned to iPhone. This Swift app is intended for personal use (for now).
+# FitNotes-iOS (Fork)
 
-# FitNotes-iOS
+This repository is a fork/adaptation of the original FitNotes iOS project:
+- Original repository: https://github.com/mylesverdon/FitNotes-iOS
 
-FitNotes is a fitness app designed specifically for gym, weight training, and resistance training enthusiasts. It provides a comprehensive set of features to help users track their workouts, customise exercises, and monitor progress.
+Maintainer of this fork:
+- xiscorossello
 
-## Features
+The app is inspired by [FitNotes Android](https://www.fitnotesapp.com/) and focused on practical daily training tracking on iPhone.
 
-- **Import from Android:** FitNotes allows users to import their workout data from Android's [FitNotes](https://www.fitnotesapp.com/), making it easy to switch to the app without losing previous records.
-- **Customisable Exercises:** Users can create and customise their own exercises, tailoring their workouts to their specific needs and preferences.
-- **Exercise Library:** A set of pre-defined exercises, covering various muscle groups and exercise categories.
-- **Workout Tracking:** Logging reps, weights, times, and/or distances for each set of each exercise.
-- TODO: **Progress Monitoring:** Visualisations and charts to help users track their strength gains, weight progression, and identify areas for improvement.
-- TODO: **Rest Timer:** A built-in rest timer allows users to maintain consistent rest periods between sets during workouts.
-- TODO: **Cloud Synchronization:** Workout data can be synced across multiple devices, backed up, and restored.
+## Release Status
 
-Demo 1|Demo 2
---|--
-![FitNotes Demo 1](https://github.com/mylesverdon/FitNotes-iOS/assets/7936811/a2f00f1e-a144-4eda-aa9d-4ce9e62da956)|![FitNotes Demo 2](https://github.com/mylesverdon/FitNotes-iOS/assets/7936811/277d2f1f-0593-4328-a517-c0e438c37781)
+This fork is currently in **beta**.
+
+- Version: **0.1.0 Beta**
+- Stability: **not stable for production use**
+- Recommendation: use with caution and keep regular backups before important data changes.
+
+## Main Features
+
+- Import workouts from Android FitNotes backup.
+- Track reps, weight, distance and time per set.
+- Custom exercises and exercise categories.
+- Category-based exercise picker.
+- Rest timer linked to exercises (with controls and notifications).
+- Personal records (PR) with history/trophy markers.
+- Copy workout from previous day.
+- Workout templates (save/apply).
+
+## Changes Added In This Fork
+
+- Improved rest timer UX:
+	- direct editing of default rest time,
+	- live countdown in timer view,
+	- pause/resume controls,
+	- plus/minus 10s controls when paused.
+- Long-press actions on workout exercise cards:
+	- replace exercise while preserving sets,
+	- delete exercise and sets.
+- Calendar improvements:
+	- category color dots under each day,
+	- removed green number highlight to avoid duplicate visual signals.
+- Android import parser updates based on real backup structure.
+- Distinct category color palette and migration for existing data.
+- Manage Exercises view refactor:
+	- grouped/ordered by category.
+- Add Exercise flow improvement:
+	- "Create Exercise" directly from inside selected category.
+- Stability fixes:
+	- safer metrics rendering without force unwraps,
+	- safer delete flow for groups/sets.
+
+## Build (Simulator)
+
+```bash
+cd /Users/xisco/Documents/FitNotes-iOS
+xcodebuild -project FitNotes.xcodeproj -scheme FitNotes -destination "platform=iOS Simulator,name=iPhone 17" build
+```
+
+## Build IPA For AltServer / AltStore
+
+AltServer signs the IPA during sideload with your Apple ID. The script below generates an unsigned IPA suitable for AltServer:
+
+```bash
+cd /Users/xisco/Documents/FitNotes-iOS
+chmod +x scripts/build_ipa_for_altserver.sh
+./scripts/build_ipa_for_altserver.sh
+```
+
+Output:
+- `build/FitNotesIOS_0.1.0.ipa`
+
+Then in AltServer/AltStore choose this IPA to install on device.
 
 

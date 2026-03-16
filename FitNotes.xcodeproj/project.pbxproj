@@ -40,6 +40,7 @@
 		55FC7EF12B40E1BA009F4603 /* WorkoutGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FC7EF02B40E1BA009F4603 /* WorkoutGroup.swift */; };
 		55FF2CA42B54769B0003C936 /* ImportFromAndroidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FF2CA32B54769A0003C936 /* ImportFromAndroidView.swift */; };
 		55FF2CA72B5723AF0003C936 /* DeleteDataWarningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FF2CA62B5723AF0003C936 /* DeleteDataWarningView.swift */; };
+		55FF2CA92B5723AF0003C936 /* FitNotesBackupDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FF2CA82B5723AF0003C936 /* FitNotesBackupDocument.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 		55FC7EF02B40E1BA009F4603 /* WorkoutGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutGroup.swift; sourceTree = "<group>"; };
 		55FF2CA32B54769A0003C936 /* ImportFromAndroidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportFromAndroidView.swift; sourceTree = "<group>"; };
 		55FF2CA62B5723AF0003C936 /* DeleteDataWarningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteDataWarningView.swift; sourceTree = "<group>"; };
+		55FF2CA82B5723AF0003C936 /* FitNotesBackupDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitNotesBackupDocument.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +287,7 @@
 			children = (
 				55FF2CA32B54769A0003C936 /* ImportFromAndroidView.swift */,
 				55FF2CA62B5723AF0003C936 /* DeleteDataWarningView.swift */,
+				55FF2CA82B5723AF0003C936 /* FitNotesBackupDocument.swift */,
 			);
 			path = ImportFromAndroid;
 			sourceTree = "<group>";
@@ -421,6 +424,7 @@
 			files = (
 				55303F882B49C5340090CF65 /* MetricsRowView.swift in Sources */,
 				55FF2CA42B54769B0003C936 /* ImportFromAndroidView.swift in Sources */,
+				55FF2CA92B5723AF0003C936 /* FitNotesBackupDocument.swift in Sources */,
 				55DB97A82B3C2C0B0002C495 /* WorkoutSet.swift in Sources */,
 				5506E61F2B435FBB0017704F /* SetListView.swift in Sources */,
 				553C326A2BE0223400076885 /* ExerciseSearchView.swift in Sources */,
@@ -624,7 +628,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.verdoncreative.FitNotes;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -663,7 +667,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.verdoncreative.FitNotes;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;

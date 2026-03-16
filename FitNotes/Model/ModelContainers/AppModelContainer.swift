@@ -2,7 +2,7 @@
 //  SwiftDataModelContainer.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 27/12/2023.
+//  Created by xiscorossello on 27/12/2023.
 //
 
 import Foundation
@@ -15,7 +15,35 @@ let AppModelContainer: ModelContainer = {
         
         @AppStorage("initialized") var initialised: Bool = false
         
-        let container = try ModelContainer(for: ExerciseCategory.self, Exercise.self, WorkoutSet.self, WorkoutGroup.self)
+        let container = try ModelContainer(
+            for: ExerciseCategory.self,
+            Exercise.self,
+            WorkoutSet.self,
+            WorkoutGroup.self,
+            WorkoutTemplate.self,
+            WorkoutTemplateItem.self,
+            WorkoutTemplateSet.self
+        )
+
+        // Keep default category colors clearly separated for existing installs too.
+        let paletteByName: [String: String] = [
+            "Shoulders": "#1E88E5",
+            "Triceps": "#E53935",
+            "Biceps": "#43A047",
+            "Chest": "#FB8C00",
+            "Back": "#6D4C41",
+            "Legs": "#00897B",
+            "Abs": "#8E24AA",
+            "Cardio": "#FDD835"
+        ]
+        if let existingCategories = try? container.mainContext.fetch(FetchDescriptor<ExerciseCategory>()) {
+            for category in existingCategories {
+                if let newColour = paletteByName[category.name], category.colour != newColour {
+                    category.colour = newColour
+                }
+            }
+            try? container.mainContext.save()
+        }
         
         // If already initialised, return container
         guard !initialised else {

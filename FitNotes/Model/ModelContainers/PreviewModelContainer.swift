@@ -2,7 +2,7 @@
 //  PreviewModelContainer.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 29/12/2023.
+//  Created by xiscorossello on 29/12/2023.
 //
 
 import SwiftUI
@@ -13,7 +13,7 @@ import SwiftData
 let previewContainer: ModelContainer = {
     do {
         
-        let container = try ModelContainer(for: Exercise.self, ExerciseCategory.self, WorkoutSet.self, WorkoutGroup.self,
+        let container = try ModelContainer(for: Exercise.self, ExerciseCategory.self, WorkoutSet.self, WorkoutGroup.self, WorkoutTemplate.self, WorkoutTemplateItem.self, WorkoutTemplateSet.self,
                                            configurations: ModelConfiguration(isStoredInMemoryOnly: true))
         
         // Add default exercise categories

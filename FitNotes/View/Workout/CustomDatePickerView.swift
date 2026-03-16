@@ -2,7 +2,7 @@
 //  CustomDatePicker.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 26/12/2023.
+//  Created by xiscorossello on 26/12/2023.
 //
 
 import SwiftUI

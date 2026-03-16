@@ -2,7 +2,7 @@
 //  SwiftUIView.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 27/12/2023.
+//  Created by xiscorossello on 27/12/2023.
 //
 
 import SwiftUI
@@ -11,6 +11,7 @@ import SwiftData
 struct TrackView: View {
     
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var restTimerManager: RestTimerManager
     
     @Binding var path: NavigationPath
     var group: WorkoutGroup
@@ -18,6 +19,7 @@ struct TrackView: View {
     @AppStorage("defaultWeightUnit") var defaultWeightUnit: WeightUnitSetting = WeightUnitSetting.kg
     @AppStorage("defaultDistanceUnit") var defaultDistanceUnit: DistanceUnitSetting = DistanceUnitSetting.kilometers
     @AppStorage("defaultTimeUnit") var defaultTimeUnit: TimeUnitSetting = TimeUnitSetting.seconds
+    @AppStorage("defaultRestTime") var defaultRestTime: Int = 90
     
     @State var reps: Double? = 0
     @State var weight: Double? = 0
@@ -27,6 +29,8 @@ struct TrackView: View {
     @State var selectedSet: WorkoutSet? = nil
     
     @State var isEditExerciseSheetOpen: Bool = false
+    @State private var isPersonalRecordsSheetOpen = false
+    @State private var isRestTimerSheetOpen = false
     
     @Query var sets: [WorkoutSet]
     
@@ -58,6 +62,9 @@ struct TrackView: View {
                                 timeSeconds: exercise.time_unit.toMetric(time: time ?? 0, defaultUnit: defaultTimeUnit),
                                 is_personal_record: false)
         group.entries.append(newSet)
+        autocompleteFromSet(newSet)
+        recomputePersonalRecords()
+        startRestTimerIfNeeded()
         
     }
     
@@ -69,8 +76,9 @@ struct TrackView: View {
         selectedSet!.reps = exercise.uses_reps ? reps ?? 0 : selectedSet!.reps
         selectedSet!.weightKilograms = exercise.uses_weight ? exercise.weight_unit.toMetric(weight: weight ?? 0, defaultUnit: defaultWeightUnit) : selectedSet!.weightKilograms
         selectedSet!.distanceMeters = exercise.uses_distance ? exercise.distance_unit.toMetric(distance: distance ?? 0, defaultUnit: defaultDistanceUnit) : selectedSet!.distanceMeters
-        selectedSet!.timeSeconds = exercise.uses_distance ? exercise.time_unit.toMetric(time: time ?? 0, defaultUnit: defaultTimeUnit) : selectedSet!.timeSeconds
+        selectedSet!.timeSeconds = exercise.uses_time ? exercise.time_unit.toMetric(time: time ?? 0, defaultUnit: defaultTimeUnit) : selectedSet!.timeSeconds
         
+        recomputePersonalRecords()
         selectedSet = nil
     }
     
@@ -85,7 +93,57 @@ struct TrackView: View {
                 }
             }
             modelContext.delete(selectedSet!)
+            recomputePersonalRecords()
             selectedSet = nil
+        }
+    }
+
+    private var personalRecordSets: [WorkoutSet] {
+        exercise.groups
+            .flatMap(\.entries)
+            .filter { $0.is_personal_record }
+            .sorted {
+                if $0.reps != $1.reps {
+                    return $0.reps > $1.reps
+                }
+                return $0.weightKilograms > $1.weightKilograms
+            }
+    }
+
+    private func startRestTimerIfNeeded() {
+        let restSeconds = exercise.rest_time_second ?? defaultRestTime
+        guard restSeconds > 0 else { return }
+        restTimerManager.start(seconds: restSeconds, exerciseName: exercise.name, alertMode: exercise.rest_alert_mode)
+    }
+
+    private func autocompleteFromSet(_ set: WorkoutSet) {
+        reps = exercise.uses_reps ? set.reps : reps
+        weight = exercise.uses_weight ? exercise.weight_unit.fromMetric(weight: set.weightKilograms, defaultUnit: defaultWeightUnit) : weight
+        distance = exercise.uses_distance ? exercise.distance_unit.fromMetric(distance: set.distanceMeters, defaultUnit: defaultDistanceUnit) : distance
+        time = exercise.uses_time ? exercise.time_unit.fromMetric(time: set.timeSeconds, defaultUnit: defaultTimeUnit) : time
+    }
+
+    private func autocompleteFromLastSet() {
+        guard let lastSet = sets.last else { return }
+        autocompleteFromSet(lastSet)
+    }
+
+    private func recomputePersonalRecords() {
+        let allSets = exercise.groups.flatMap(\.entries)
+        guard !allSets.isEmpty else { return }
+
+        var bestWeightByReps: [Double: Double] = [:]
+
+        for set in allSets {
+            let currentBest = bestWeightByReps[set.reps] ?? -.greatestFiniteMagnitude
+            if set.weightKilograms > currentBest {
+                bestWeightByReps[set.reps] = set.weightKilograms
+            }
+        }
+
+        for set in allSets {
+            let bestWeight = bestWeightByReps[set.reps] ?? .greatestFiniteMagnitude
+            set.is_personal_record = set.weightKilograms > 0 && set.weightKilograms >= bestWeight
         }
     }
     
@@ -93,6 +151,20 @@ struct TrackView: View {
         GeometryReader { geometry in
             VStack(alignment: .center) {
                 VStack {
+                    if restTimerManager.isRunning {
+                        HStack {
+                            Image(systemName: "timer")
+                            Text("Rest: \(restTimerManager.formattedTime)")
+                                .bold()
+                            Spacer()
+                            Button("Stop") {
+                                restTimerManager.stop()
+                            }
+                        }
+                        .padding(10)
+                        .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
+                        .padding(.bottom, 4)
+                    }
                     
                     HStack {
                         if (exercise.uses_reps) {
@@ -164,7 +236,7 @@ struct TrackView: View {
                     }
             }
             .onAppear {
-                print("HEREHRERE")
+                autocompleteFromLastSet()
             }
             .frame(width: geometry.size.width)
             .navigationBarTitleDisplayMode(.inline)
@@ -190,6 +262,19 @@ struct TrackView: View {
                             isEditExerciseSheetOpen.toggle()
                         }
                 }
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button {
+                        isRestTimerSheetOpen = true
+                    } label: {
+                        Image(systemName: "clock")
+                    }
+
+                    Button {
+                        isPersonalRecordsSheetOpen = true
+                    } label: {
+                        Image(systemName: "trophy")
+                    }
+                }
                 //                ToolbarItemGroup(placement: .keyboard) {
                 //                    Spacer()
                 //                    Button("Done") {
@@ -197,9 +282,28 @@ struct TrackView: View {
                 //                    }
                 //                }
                 
-            }.sheet(isPresented: $isEditExerciseSheetOpen, content: {
+            }
+            .sheet(isPresented: $isEditExerciseSheetOpen, content: {
                 ManageExerciseView()
             })
+            .sheet(isPresented: $isPersonalRecordsSheetOpen) {
+                NavigationStack {
+                    PersonalRecordHistoryView(
+                        exerciseName: exercise.name,
+                        sets: personalRecordSets,
+                        weightUnit: exercise.weight_unit,
+                        defaultWeightUnit: defaultWeightUnit
+                    )
+                }
+            }
+            .sheet(isPresented: $isRestTimerSheetOpen) {
+                NavigationStack {
+                    RestTimerControlView(
+                        exercise: exercise,
+                        defaultRestTime: defaultRestTime
+                    )
+                }
+            }
             .background(
                 Rectangle()
                     .fill(.black.opacity(0))
@@ -210,5 +314,171 @@ struct TrackView: View {
                         selectedSet = nil
                     })
         }
+    }
+}
+
+struct RestTimerControlView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var restTimerManager: RestTimerManager
+
+    let exercise: Exercise
+    let defaultRestTime: Int
+    @State private var defaultRestSecondsInput: String
+    @FocusState private var isTimeInputFocused: Bool
+
+    init(exercise: Exercise, defaultRestTime: Int) {
+        self.exercise = exercise
+        self.defaultRestTime = defaultRestTime
+        _defaultRestSecondsInput = State(initialValue: String(exercise.rest_time_second ?? defaultRestTime))
+    }
+
+    private var startSeconds: Int {
+        Int(defaultRestSecondsInput) ?? (exercise.rest_time_second ?? defaultRestTime)
+    }
+
+    private var displayTime: String {
+        if restTimerManager.isRunning || restTimerManager.isPaused {
+            return restTimerManager.formattedTime
+        }
+
+        let seconds = max(0, startSeconds)
+        let minutes = seconds / 60
+        let secs = seconds % 60
+        return String(format: "%02d:%02d", minutes, secs)
+    }
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text(displayTime)
+                .font(.system(size: 46, weight: .bold, design: .rounded))
+                .onTapGesture {
+                    isTimeInputFocused = true
+                }
+
+            VStack(spacing: 8) {
+                HStack {
+                    Text("Default after each set")
+                    Spacer()
+                    TextField("90", text: $defaultRestSecondsInput)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 72)
+                        .focused($isTimeInputFocused)
+                }
+
+                Button("Save default") {
+                    exercise.rest_time_second = startSeconds
+                    try? modelContext.save()
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding(.horizontal)
+
+            HStack(spacing: 12) {
+                if restTimerManager.isRunning {
+                    Button("Pause") {
+                        restTimerManager.pause()
+                    }
+                    .buttonStyle(.borderedProminent)
+                } else if restTimerManager.isPaused {
+                    Button("Resume") {
+                        restTimerManager.resume()
+                    }
+                    .buttonStyle(.borderedProminent)
+                } else {
+                    Button("Start") {
+                        exercise.rest_time_second = startSeconds
+                        try? modelContext.save()
+                        restTimerManager.start(seconds: startSeconds, exerciseName: exercise.name, alertMode: exercise.rest_alert_mode)
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+
+                Button("Stop") {
+                    restTimerManager.stop()
+                }
+                .buttonStyle(.bordered)
+            }
+
+            if restTimerManager.isPaused {
+                HStack(spacing: 12) {
+                    Button("-10s") {
+                        restTimerManager.adjust(by: -10)
+                    }
+                    .buttonStyle(.bordered)
+
+                    Button("+10s") {
+                        restTimerManager.adjust(by: 10)
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+
+            Spacer()
+        }
+        .padding()
+        .navigationTitle("Rest Timer")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Close") {
+                    dismiss()
+                }
+            }
+        }
+    }
+}
+
+struct PersonalRecordHistoryView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let exerciseName: String
+    let sets: [WorkoutSet]
+    let weightUnit: WeightUnit
+    let defaultWeightUnit: WeightUnitSetting
+
+    var body: some View {
+        List {
+            if sets.isEmpty {
+                ContentUnavailableView("No PRs yet", systemImage: "trophy", description: Text("Save heavier sets to build your PR history."))
+            } else {
+                ForEach(sets) { set in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(format(set.reps)) reps x \(formatWeight(set.weightKilograms))")
+                                .bold()
+                            if let date = set.group?.date {
+                                Text(date.formatted(date: .abbreviated, time: .omitted))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        Spacer()
+                        Image(systemName: "trophy.fill")
+                            .foregroundStyle(.yellow)
+                    }
+                }
+            }
+        }
+        .navigationTitle("\(exerciseName) PR")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Close") { dismiss() }
+            }
+        }
+    }
+
+    private func formatWeight(_ kilograms: Double) -> String {
+        let converted = weightUnit.fromMetric(weight: kilograms, defaultUnit: defaultWeightUnit)
+        return "\(format(converted)) \(weightUnit.resolve(defaultUnit: defaultWeightUnit))"
+    }
+
+    private func format(_ value: Double) -> String {
+        if value.truncatingRemainder(dividingBy: 1) == 0 {
+            return String(Int(value))
+        }
+        return String(format: "%.1f", value)
     }
 }

@@ -2,7 +2,7 @@
 //  NumericInputView.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 30/12/2023.
+//  Created by xiscorossello on 30/12/2023.
 //
 
 import SwiftUI

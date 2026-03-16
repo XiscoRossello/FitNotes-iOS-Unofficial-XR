@@ -2,7 +2,7 @@
 //  Entry.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 27/12/2023.
+//  Created by xiscorossello on 27/12/2023.
 //
 
 import Foundation

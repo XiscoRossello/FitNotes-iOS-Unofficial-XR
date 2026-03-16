@@ -2,7 +2,7 @@
 //  AddExerciseView.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 15/04/2024.
+//  Created by xiscorossello on 15/04/2024.
 //
 
 import SwiftUI
@@ -44,8 +44,10 @@ struct AddEditExerciseView: View {
     // Rest time
     @State var restTimeInput: String = ""
     @State var restTimeValid: Bool = true
+    @State var restAlertMode: RestAlertMode = .soundAndVibration
     
     @State var notes: String = ""
+    private let initialCategory: ExerciseCategory?
     
     
     var isSaveable: Bool {
@@ -54,8 +56,16 @@ struct AddEditExerciseView: View {
                             exercise?.category != category ||
                             exercise?.uses_reps != usesReps ||
                             exercise?.uses_weight != usesWeight ||
+                            exercise?.weight_unit != weightUnit ||
+                            exercise?.weight_increment != Double(weightIncrementInput) ||
                             exercise?.uses_time != usesTime ||
+                            exercise?.time_unit != timeUnit ||
+                            exercise?.time_increment != Double(timeIncrementInput) ||
                             exercise?.uses_distance != usesDistance ||
+                            exercise?.distance_unit != distanceUnit ||
+                            exercise?.distance_increment != Double(distanceIncrementInput) ||
+                            exercise?.rest_time_second != Int(restTimeInput) ||
+                            exercise?.rest_alert_mode != restAlertMode ||
                             exercise?.notes != notes)
         
         return (
@@ -74,7 +84,8 @@ struct AddEditExerciseView: View {
         
     }
     
-    init(exercise: Exercise? = nil) {
+    init(exercise: Exercise? = nil, initialCategory: ExerciseCategory? = nil) {
+        self.initialCategory = initialCategory
         if (exercise != nil) {
             self.exercise = exercise
             
@@ -91,7 +102,12 @@ struct AddEditExerciseView: View {
             _timeUnit = State<TimeUnit>(initialValue: exercise!.time_unit)
             _timeIncrementInput = State<String>(initialValue: exercise!.time_increment?.formatted() ?? "")
             _restTimeInput = State<String>(initialValue: exercise!.rest_time_second?.formatted() ?? "")
+            _restAlertMode = State<RestAlertMode>(initialValue: exercise!.rest_alert_mode)
             _notes = State<String>(initialValue: exercise!.notes)
+        } else {
+            _category = State<ExerciseCategory?>(initialValue: initialCategory)
+            let storedDefaultRest = UserDefaults.standard.integer(forKey: "defaultRestTime")
+            _restTimeInput = State<String>(initialValue: String(storedDefaultRest == 0 ? 90 : storedDefaultRest))
         }
     }
     
@@ -137,6 +153,12 @@ struct AddEditExerciseView: View {
             
             Section("Rest Time") {
                 ValidatedNumericInput(label: "Rest Time (Sec)", input: $restTimeInput, isValid: $restTimeValid)
+                Picker("Rest Alert", selection: $restAlertMode) {
+                    ForEach(RestAlertMode.allCases, id: \.self) { mode in
+                        Text(mode.rawValue)
+                            .tag(mode)
+                    }
+                }
             }
             
             Section("Notes") {
@@ -167,6 +189,7 @@ struct AddEditExerciseView: View {
                     exercise!.distance_unit = distanceUnit
                     exercise!.distance_increment = Double(distanceIncrementInput)
                     exercise!.rest_time_second = Int(restTimeInput)
+                    exercise!.rest_alert_mode = restAlertMode
                     exercise!.notes = notes
                     
                     try! modelContext.save()
@@ -188,7 +211,8 @@ struct AddEditExerciseView: View {
                                                  time_unit: timeUnit,
                                                  time_increment: Double(timeIncrementInput),
                                                  notes: notes,
-                                                 rest_time_second: Int(restTimeInput)))
+                                                 rest_time_second: Int(restTimeInput),
+                                                 rest_alert_mode: restAlertMode))
                 }
                 
                 presentationMode.wrappedValue.dismiss()

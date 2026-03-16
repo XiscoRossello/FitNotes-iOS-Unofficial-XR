@@ -2,7 +2,7 @@
 //  MetricsViews.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 06/01/2024.
+//  Created by xiscorossello on 06/01/2024.
 //
 
 import SwiftUI
@@ -18,34 +18,43 @@ var doubleFormatter: NumberFormatter {
 struct MetricsRow: View {
     
     var set: WorkoutSet
-    var exercise: Exercise {
-        self.set.group!.exercise!
+    var exercise: Exercise? {
+        self.set.group?.exercise
     }
     
     var numActive: Int {
-        return exercise.uses_reps.intValue + exercise.uses_time.intValue + exercise.uses_distance.intValue + exercise.uses_time.intValue
+        guard let exercise else { return 1 }
+        let active = exercise.uses_reps.intValue
+            + exercise.uses_weight.intValue
+            + exercise.uses_distance.intValue
+            + exercise.uses_time.intValue
+        return max(1, active)
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            HStack {
-                
-                RepsMetricView(set: set)
-                    .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
-                    .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
-                
-                WeightMetricView(set: set)
-                    .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
-                    .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
-                
-                DistanceMetricView(set: set)
-                    .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
-                    .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
-                
-                TimeMetricView(set: set)
-                    .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
-                    .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
-                
+        Group {
+            if let exercise {
+                GeometryReader { geometry in
+                    HStack {
+                        RepsMetricView(set: set, exercise: exercise)
+                            .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
+                            .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
+
+                        WeightMetricView(set: set, exercise: exercise)
+                            .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
+                            .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
+
+                        DistanceMetricView(set: set, exercise: exercise)
+                            .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
+                            .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
+
+                        TimeMetricView(set: set, exercise: exercise)
+                            .textScale(Text.Scale.secondary, isEnabled: numActive > 2)
+                            .frame(maxWidth: geometry.size.width / CGFloat(numActive), maxHeight: geometry.size.height, alignment: .center)
+                    }
+                }
+            } else {
+                EmptyView()
             }
         }
     }
@@ -55,9 +64,7 @@ struct MetricsRow: View {
 struct RepsMetricView: View {
 
     var set: WorkoutSet
-    var exercise: Exercise {
-        self.set.group!.exercise!
-    }
+    var exercise: Exercise
     
     var body: some View {
         MetricView(value: doubleFormatter.string(from: set.reps as NSNumber) ?? "Error",
@@ -70,9 +77,7 @@ struct RepsMetricView: View {
 struct WeightMetricView: View {
 
     var set: WorkoutSet
-    var exercise: Exercise {
-        self.set.group!.exercise!
-    }
+    var exercise: Exercise
     
     @AppStorage("defaultWeightUnit") var defaultWeightUnit: WeightUnitSetting = WeightUnitSetting.kg
     
@@ -90,9 +95,7 @@ struct WeightMetricView: View {
 struct DistanceMetricView: View {
 
     var set: WorkoutSet
-    var exercise: Exercise {
-        self.set.group!.exercise!
-    }
+    var exercise: Exercise
     
     @AppStorage("defaultDistanceUnit") var defaultDistanceUnit: DistanceUnitSetting = DistanceUnitSetting.kilometers
     
@@ -110,9 +113,7 @@ struct DistanceMetricView: View {
 struct TimeMetricView: View {
 
     var set: WorkoutSet
-    var exercise: Exercise {
-        self.set.group!.exercise!
-    }
+    var exercise: Exercise
     
     @AppStorage("defaultTimeUnit") var defaultTimeUnit: TimeUnitSetting = TimeUnitSetting.seconds
     

@@ -2,7 +2,7 @@
 //  Color.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 29/12/2023.
+//  Created by xiscorossello on 29/12/2023.
 //
 
 import Foundation

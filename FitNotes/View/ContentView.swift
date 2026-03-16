@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 27/12/2023.
+//  Created by xiscorossello on 27/12/2023.
 //
 
 import SwiftUI
@@ -27,6 +27,8 @@ struct ContentView: View {
                             .navigationTitle("Settings")
                     case "ImportFromAndroid":
                         DataDeleteWarningView(path: $path)
+                    case "ExportData":
+                        ImportFromAndroidView(path: $path, showImportActions: false)
                     default:
                         Text("Unknown path")
                     }
@@ -35,6 +37,7 @@ struct ContentView: View {
                     TrackView(path: $path, group: group)
                 }
         }
+        .preferredColorScheme(.dark)
     }
 }
 

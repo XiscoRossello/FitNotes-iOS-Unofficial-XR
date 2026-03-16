@@ -2,7 +2,7 @@
 //  DeleteDataWarningView.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 16/01/2024.
+//  Created by xiscorossello on 16/01/2024.
 //
 
 import SwiftUI
@@ -19,8 +19,6 @@ struct DataDeleteWarningView: View {
     @Query private var categories: [ExerciseCategory]
     
     @State private var alertPresented = false
-    @State private var confirmationString: String = ""
-    @State private var isConfirmButtonEnabled = false
     @State private var shouldProgressView = false
     
     var body: some View {
@@ -36,30 +34,17 @@ struct DataDeleteWarningView: View {
                     .multilineTextAlignment(.center)
                     .padding(30)
                 
-                Text("Are you sure you want to proceed? Type DELETE below to confirm.")
+                Text("Are you sure you want to proceed?")
                     .multilineTextAlignment(.center)
                     .padding()
                     .bold()
-                
-                
-                
-                TextField("Type DELETE here", text: $confirmationString)
-                    .background(Color(uiColor: .secondarySystemFill),
-                                in: RoundedRectangle(cornerRadius: 5))
-                    .autocapitalization(.none)
-                    .multilineTextAlignment(.center)
-                    .frame(width: 250)
-                    .font(.title2)
-                    .autocorrectionDisabled(true)
-                
-                
+
                 Button("DELETE DATA", role: .destructive) {
                     alertPresented = true
                 }
                 .font(.title2)
                 .padding()
                 .buttonStyle(.borderedProminent)
-                .disabled(confirmationString != "DELETE")
             
             }
             .padding()

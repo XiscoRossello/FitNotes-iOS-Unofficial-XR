@@ -2,11 +2,36 @@
 //  Types.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 26/12/2023.
+//  Created by xiscorossello on 26/12/2023.
 //
 
 
 protocol PickerEnum: RawRepresentable, Codable, Hashable, CaseIterable where RawValue == String {}
+
+enum RestAlertMode: String, Codable, CaseIterable, PickerEnum {
+    case soundAndVibration = "Sound + Vibration"
+    case soundOnly = "Sound Only"
+    case vibrationOnly = "Vibration Only"
+    case silent = "Silent"
+
+    var includesSound: Bool {
+        switch self {
+        case .soundAndVibration, .soundOnly:
+            return true
+        case .vibrationOnly, .silent:
+            return false
+        }
+    }
+
+    var includesVibration: Bool {
+        switch self {
+        case .soundAndVibration, .vibrationOnly:
+            return true
+        case .soundOnly, .silent:
+            return false
+        }
+    }
+}
 
 
 enum WeightUnit: String, Codable, CaseIterable, PickerEnum {

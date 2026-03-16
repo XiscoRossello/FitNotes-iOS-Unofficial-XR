@@ -2,7 +2,7 @@
 //  Category.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 26/12/2023.
+//  Created by xiscorossello on 26/12/2023.
 //
 
 import Foundation
@@ -28,11 +28,11 @@ class ExerciseCategory {
 }
 
 // Default categories
-var ShoulderCategory = ExerciseCategory(name: "Shoulders", colour: "#F54336")
-var TricepCategory = ExerciseCategory(name: "Triceps", colour: "#EE2C2C")
-var BicepCategory = ExerciseCategory(name: "Biceps", colour: "#FF00FF")
-var ChestCategory = ExerciseCategory(name: "Chest", colour: "#FDB813")
-var BackCategory = ExerciseCategory(name: "Back", colour: "#E5053A")
-var LegsCategory = ExerciseCategory(name: "Legs", colour: "#D7DF01")
-var AbsCategory = ExerciseCategory(name: "Abs", colour: "#FF00CC")
-var CardioCategory = ExerciseCategory(name: "Cardio", colour: "#FFD300")
+var ShoulderCategory = ExerciseCategory(name: "Shoulders", colour: "#1E88E5") // blue
+var TricepCategory = ExerciseCategory(name: "Triceps", colour: "#E53935") // red
+var BicepCategory = ExerciseCategory(name: "Biceps", colour: "#43A047") // green
+var ChestCategory = ExerciseCategory(name: "Chest", colour: "#FB8C00") // orange
+var BackCategory = ExerciseCategory(name: "Back", colour: "#6D4C41") // brown
+var LegsCategory = ExerciseCategory(name: "Legs", colour: "#00897B") // teal
+var AbsCategory = ExerciseCategory(name: "Abs", colour: "#8E24AA") // purple
+var CardioCategory = ExerciseCategory(name: "Cardio", colour: "#FDD835") // yellow

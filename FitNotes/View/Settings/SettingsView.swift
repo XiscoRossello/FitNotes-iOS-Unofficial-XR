@@ -2,7 +2,7 @@
 //  Settings.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 30/12/2023.
+//  Created by xiscorossello on 30/12/2023.
 //
 
 import SwiftUI
@@ -52,7 +52,12 @@ struct SettingsView: View {
                 Section("") {
                     HStack {
                         NavigationLink(value: "ImportFromAndroid") {
-                            Text("Import from FitNotes Android")
+                            Text("Import Data")
+                        }
+                    }
+                    HStack {
+                        NavigationLink(value: "ExportData") {
+                            Text("Export Data")
                         }
                     }
                 }

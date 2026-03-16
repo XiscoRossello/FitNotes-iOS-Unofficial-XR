@@ -2,7 +2,7 @@
 //  SetListView.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 01/01/2024.
+//  Created by xiscorossello on 01/01/2024.
 //
 
 import SwiftUI
@@ -33,6 +33,12 @@ struct SetListView: View {
                                     .bold())
                         
                         MetricsRow(set: set)
+
+                        if set.is_personal_record {
+                            Image(systemName: "trophy.fill")
+                                .foregroundStyle(.yellow)
+                                .font(.caption)
+                        }
                         
                         Spacer()
                     }

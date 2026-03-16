@@ -2,7 +2,7 @@
 //  Exercise.swift
 //  FitNotes
 //
-//  Created by Myles Verdon on 26/12/2023.
+//  Created by xiscorossello on 26/12/2023.
 //
 
 import Foundation
@@ -11,7 +11,7 @@ import SwiftData
 @Model
 class Exercise {
     
-    init(name: String, category: ExerciseCategory? = nil, uses_reps: Bool = true, uses_weight: Bool = true, weight_unit: WeightUnit = WeightUnit.default, weight_increment: Double? = nil, uses_distance: Bool = false, distance_unit: DistanceUnit = DistanceUnit.default, distance_increment: Double? = nil, uses_time: Bool = false, time_unit: TimeUnit = TimeUnit.default, time_increment: Double? = nil, notes: String = "", rest_time_second: Int? = nil) {
+    init(name: String, category: ExerciseCategory? = nil, uses_reps: Bool = true, uses_weight: Bool = true, weight_unit: WeightUnit = WeightUnit.default, weight_increment: Double? = nil, uses_distance: Bool = false, distance_unit: DistanceUnit = DistanceUnit.default, distance_increment: Double? = nil, uses_time: Bool = false, time_unit: TimeUnit = TimeUnit.default, time_increment: Double? = nil, notes: String = "", rest_time_second: Int? = nil, rest_alert_mode: RestAlertMode = .soundAndVibration) {
         self.name = name
         self.category = category
         self.uses_reps = uses_reps
@@ -26,6 +26,7 @@ class Exercise {
         self.time_increment = time_increment
         self.notes = notes
         self.rest_time_second = rest_time_second
+        self.rest_alert_mode = rest_alert_mode
         self.groups = []
     }
     
@@ -55,6 +56,7 @@ class Exercise {
     var notes: String
     
     var rest_time_second: Int?
+    var rest_alert_mode: RestAlertMode
     
     @Relationship(deleteRule: .cascade, inverse: \WorkoutGroup.exercise)
     var groups: [WorkoutGroup]

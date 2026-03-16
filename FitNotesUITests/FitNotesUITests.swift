@@ -2,7 +2,7 @@
 //  FitNotesUITests.swift
 //  FitNotesUITests
 //
-//  Created by Myles Verdon on 22/12/2023.
+//  Created by xiscorossello on 22/12/2023.
 //
 
 import XCTest
