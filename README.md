@@ -53,7 +53,7 @@ This fork is currently in **beta**.
 ## Build (Simulator)
 
 ```bash
-cd /Users/xisco/Documents/FitNotes-iOS
+cd /FitNotes-iOS
 xcodebuild -project FitNotes.xcodeproj -scheme FitNotes -destination "platform=iOS Simulator,name=iPhone 17" build
 ```
 
@@ -62,7 +62,7 @@ xcodebuild -project FitNotes.xcodeproj -scheme FitNotes -destination "platform=i
 AltServer signs the IPA during sideload with your Apple ID. The script below generates an unsigned IPA suitable for AltServer:
 
 ```bash
-cd /Users/xisco/Documents/FitNotes-iOS
+cd /FitNotes-iOS
 chmod +x scripts/build_ipa_for_altserver.sh
 ./scripts/build_ipa_for_altserver.sh
 ```
